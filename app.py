@@ -1,3 +1,4 @@
+import os
 from flask import Flask,request,jsonify
 
 from utils import get_summarized_text, read_from_document, read_from_url, read_from_video
@@ -5,6 +6,7 @@ from health_dummy_text import text
 
 
 app = Flask(__name__)
+
 
 @app.route('/')
 def index():
@@ -36,7 +38,9 @@ def summarize(data_key):
 
 
 
-
+if __name__ == '__main__':
+    port = os.getenv('PORT') or 4000
+    app.run(host='0.0.0.0',port=port)
 
 
 

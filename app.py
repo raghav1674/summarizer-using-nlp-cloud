@@ -18,23 +18,28 @@ def health():
 
 @app.route('/summarize/<string:data_key>',methods=['POST'])
 def summarize(data_key):
-    text = None
-    if data_key == 'file':
-        file_store = request.files['src_file']
-        text = read_from_document(file_store)
-    else:
-        data = request.get_json()
-        data_value = data[data_key]
-        text = data_value 
-        if data_key == 'url':
-            text = read_from_url(data_value)
-        elif data_key == 'video':
-            text = read_from_video(data_value)
-    if text:
-        response = get_summarized_text(text)
-    else:
-        response = 'Hello , Please provide valid input'
-    return jsonify({"summary_text" : response})
+    try:
+        text = None
+        if data_key == 'file':
+            file_store = request.files['src_file']
+            text = read_from_document(file_store)
+        else:
+            data = request.get_json()
+            data_value = data[data_key]
+            text = data_value 
+            if data_key == 'url':
+                text = read_from_url(data_value)
+            elif data_key == 'video':
+                video_id = data_value.split('/')[-1]
+                text = read_from_video(video_id)
+        if text:
+            response = get_summarized_text(text)
+        else:
+            response = 'Hello , Please provide valid input'
+        return jsonify({"summary_text" : response})
+    except Exception as e:
+        print(e)
+        return jsonify({"summary_text" : 'Some error happened',"error": f'{e}'})
 
 
 

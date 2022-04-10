@@ -9,11 +9,14 @@ NLP_CLOUD_TOKEN = os.getenv('NLP_CLOUD_TOKEN')
 nlp_cloud_client = nlpcloud.Client(NLP_CLOUD_MODEL,NLP_CLOUD_TOKEN)
 
 def read_from_video(video_id):
-    response_data = YouTubeTranscriptApi.get_transcript(video_id)
-    full_text = ''
-    for each_text in response_data:
-        full_text += ' '+ each_text['text']
-    return full_text
+    try:
+        response_data = YouTubeTranscriptApi.get_transcript(video_id,languages=['en','en-IN'])
+        full_text = ''
+        for each_text in response_data:
+            full_text += ' '+ each_text['text']
+        return full_text
+    except Exception as e:
+        raise Exception(f'{e}')
 
 def read_from_url(url):
 

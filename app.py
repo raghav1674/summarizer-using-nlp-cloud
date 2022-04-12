@@ -1,7 +1,7 @@
 import os
 from flask import Flask,request,jsonify
 
-from utils import get_summarized_text, read_from_document, read_from_url, read_from_video
+from utils import  get_summarized_text_meaning_api, get_summarized_text_nlp_cloud, read_from_document, read_from_url, read_from_video
 from health_dummy_text import text
 
 
@@ -14,7 +14,8 @@ def index():
 
 @app.route('/health')
 def health():
-    return jsonify({"summary_text" : get_summarized_text(text)})
+    return jsonify({"summary_text_from_nlp_cloud" : get_summarized_text_nlp_cloud(text),
+                "summary_text_from_meaning_api" : get_summarized_text_meaning_api(text)})
 
 @app.route('/summarize/<string:data_key>',methods=['POST'])
 def summarize(data_key):
@@ -33,7 +34,10 @@ def summarize(data_key):
                 video_id = data_value.split('/')[-1]
                 text = read_from_video(video_id)
         if text:
-            response = get_summarized_text(text)
+            if data_key == 'text':
+                response = get_summarized_text_nlp_cloud(text)
+            else:
+                response = get_summarized_text_meaning_api(text)
         else:
             response = 'Hello , Please provide valid input'
         return jsonify({"summary_text" : response})

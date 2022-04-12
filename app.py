@@ -34,10 +34,10 @@ def summarize(data_key):
                 video_id = data_value.split('/')[-1]
                 text = read_from_video(video_id)
         if text:
-            if data_key == 'text':
-                response = get_summarized_text_nlp_cloud(text)
-            else:
+            if data_key == 'video':
                 response = get_summarized_text_meaning_api(text)
+            else:
+                response = get_summarized_text_nlp_cloud(text)
         else:
             response = 'Hello , Please provide valid input'
         return jsonify({"summary_text" : response})

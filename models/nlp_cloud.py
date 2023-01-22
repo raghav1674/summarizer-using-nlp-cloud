@@ -5,8 +5,8 @@ import nlpcloud
 NLP_CLOUD_MODEL = os.getenv('NLP_CLOUD_MODEL') 
 NLP_CLOUD_TOKEN = os.getenv('NLP_CLOUD_TOKEN') 
 
-nlp_cloud_client = nlpcloud.Client(NLP_CLOUD_MODEL,NLP_CLOUD_TOKEN)
 
 def get_summarized_text(text):
+    nlp_cloud_client = nlpcloud.Client(NLP_CLOUD_MODEL,NLP_CLOUD_TOKEN)
     response  = nlp_cloud_client.summarization(text)
     return response['summary_text']

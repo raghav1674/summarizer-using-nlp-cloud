@@ -1,9 +1,15 @@
+# core
 import os
 from flask import Flask,request,jsonify
 
-from utils import  get_summarized_text_meaning_api, get_summarized_text_nlp_cloud, read_from_document, read_from_url, read_from_video
+# utils
+from utils import read_from_document, read_from_url, read_from_video
 from health_dummy_text import text
 
+# models
+import models.meaning_cloud as meaning_cloud
+import models.open_api as open_api
+import models.nlp_cloud as nlp_cloud
 
 app = Flask(__name__)
 
@@ -14,8 +20,13 @@ def index():
 
 @app.route('/health')
 def health():
-    return jsonify({"summary_text_from_nlp_cloud" : get_summarized_text_nlp_cloud(text),
-                "summary_text_from_meaning_api" : get_summarized_text_meaning_api(text)})
+    return jsonify(
+        {
+            # "summary_text_from_nlp_cloud" : nlp_cloud.get_summarized_text(text),
+            # "summary_text_from_meaning_api" : meaning_cloud.get_summarized_text(text),
+            "summary_text_from_open_api" : open_api.get_summarized_text(text),
+        }
+    )
 
 @app.route('/summarize/<string:data_key>',methods=['POST'])
 def summarize(data_key):
@@ -34,17 +45,16 @@ def summarize(data_key):
                 video_id = data_value.split('/')[-1]
                 text = read_from_video(video_id)
         if text:
-            if data_key == 'text':
-                response = get_summarized_text_nlp_cloud(text)
-            else:
-                response = get_summarized_text_meaning_api(text)
+        #     if data_key == 'text':
+            response = open_api.get_summarized_text(text)
+            # else:
+            #     response = meaning_cloud.get_summarized_text(text)
         else:
             response = 'Hello , Please provide valid input'
         return jsonify({"summary_text" : response})
     except Exception as e:
         print(e)
         return jsonify({"summary_text" : 'Some error happened',"error": f'{e}'})
-
 
 
 if __name__ == '__main__':
